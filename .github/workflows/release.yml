@@ -27,6 +27,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   precheck:
     runs-on: ubuntu-22.04
@@ -34,6 +37,11 @@ jobs:
       contents: write
     if: github.repository == 'eclipse-csi/otterdog'
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check ref
         shell: bash
         run: |
@@ -51,6 +59,11 @@ jobs:
       release-version: ${{ steps.prepare-release.outputs.RELEASE_VERSION }}
       release-tag: ${{ steps.prepare-release.outputs.RELEASE_TAG }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Setup Git User
         run: |
           git config --global user.name '${{ env.BOT_USER_NAME }}'
@@ -117,6 +130,11 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ needs.release.outputs.release-tag }}
@@ -157,6 +175,11 @@ jobs:
       contents: read
       id-token: write
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ needs.release.outputs.release-tag }}
@@ -186,6 +209,11 @@ jobs:
       contents: write
     if: ${{ github.event.inputs.version-fragment != 'none' }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Setup Git User
         run: |
           git config --global user.name '${{ env.BOT_USER_NAME }}'
